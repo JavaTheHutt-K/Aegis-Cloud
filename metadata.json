@@ -1,0 +1,6 @@
+{
+  "name": "AegisCloud - Privacy-Preserving AI & Blockchain IDS Framework",
+  "description": "Decentralized intrusion detection platform for ubiquitous cloud environments combining federated learning, differential privacy, zero-knowledge proofs, and blockchain consensus.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

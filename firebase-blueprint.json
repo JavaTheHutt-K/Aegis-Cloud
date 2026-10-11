@@ -1,0 +1,226 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Authenticated user profile for AegisCloud platform",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Firebase Auth UID",
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "User email address",
+          "maxLength": 256
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Full name or alias",
+          "maxLength": 128
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "Profile picture URL",
+          "maxLength": 1024
+        },
+        "role": {
+          "type": "string",
+          "enum": ["operator", "auditor", "admin"],
+          "description": "Access control role"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Account registration timestamp"
+        }
+      },
+      "required": ["id", "email", "role", "createdAt"]
+    },
+    "ThreatRecord": {
+      "title": "ThreatRecord",
+      "description": "Intrusion threat detection record persisted to cloud storage",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Threat record unique ID",
+          "maxLength": 128
+        },
+        "threatType": {
+          "type": "string",
+          "description": "Attack vector identifier",
+          "maxLength": 64
+        },
+        "mitreTactic": {
+          "type": "string",
+          "description": "MITRE ATT&CK technique code",
+          "maxLength": 32
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["Critical", "High", "Medium", "Low", "Benign"],
+          "description": "Threat severity level"
+        },
+        "nodeId": {
+          "type": "string",
+          "description": "Target cloud node identifier",
+          "maxLength": 64
+        },
+        "zkProofHash": {
+          "type": "string",
+          "description": "Zero-Knowledge proof commitment hash",
+          "maxLength": 128
+        },
+        "txHash": {
+          "type": "string",
+          "description": "Consortium blockchain transaction hash",
+          "maxLength": 128
+        },
+        "timestamp": {
+          "type": "number",
+          "description": "Unix timestamp in milliseconds"
+        },
+        "reporterUid": {
+          "type": "string",
+          "description": "UID of the operator or node submitting the report",
+          "maxLength": 128
+        }
+      },
+      "required": ["id", "threatType", "severity", "nodeId", "zkProofHash", "timestamp", "reporterUid"]
+    },
+    "HuggingFaceModel": {
+      "title": "HuggingFaceModel",
+      "description": "Imported Hugging Face cybersecurity or intrusion detection model",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Sanitized model repository identifier",
+          "maxLength": 128
+        },
+        "modelId": {
+          "type": "string",
+          "description": "Full Hugging Face repo tag e.g. microsoft/deberta-v3-base-ids",
+          "maxLength": 256
+        },
+        "author": {
+          "type": "string",
+          "description": "Hugging Face model creator or organization",
+          "maxLength": 128
+        },
+        "pipelineTag": {
+          "type": "string",
+          "description": "Task domain e.g. text-classification, feature-extraction",
+          "maxLength": 64
+        },
+        "downloads": {
+          "type": "number",
+          "description": "Monthly download counter"
+        },
+        "architecture": {
+          "type": "string",
+          "description": "Base neural model architecture",
+          "maxLength": 128
+        },
+        "benchmarkAccuracy": {
+          "type": "number",
+          "description": "Reported detection accuracy percentage"
+        },
+        "quantizedSizeMb": {
+          "type": "number",
+          "description": "ONNX quantized model size in Megabytes"
+        },
+        "importedAt": {
+          "type": "number",
+          "description": "Import timestamp in milliseconds"
+        },
+        "importedByUid": {
+          "type": "string",
+          "description": "UID of the user who imported the model",
+          "maxLength": 128
+        }
+      },
+      "required": ["id", "modelId", "author", "pipelineTag", "architecture", "importedAt", "importedByUid"]
+    },
+    "AuditEntry": {
+      "title": "AuditEntry",
+      "description": "Blockchain-backed audit log record",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Audit log identifier",
+          "maxLength": 128
+        },
+        "category": {
+          "type": "string",
+          "enum": ["detected_intrusion", "model_training", "access_control"],
+          "description": "Audit classification category"
+        },
+        "action": {
+          "type": "string",
+          "description": "Security action performed",
+          "maxLength": 64
+        },
+        "actor": {
+          "type": "string",
+          "description": "Operator or node identifier",
+          "maxLength": 128
+        },
+        "summary": {
+          "type": "string",
+          "description": "Human-readable description of the event",
+          "maxLength": 1024
+        },
+        "recordHash": {
+          "type": "string",
+          "description": "SHA-256 recursive record hash",
+          "maxLength": 128
+        },
+        "previousRecordHash": {
+          "type": "string",
+          "description": "Previous block recursive link hash",
+          "maxLength": 128
+        },
+        "blockHeight": {
+          "type": "number",
+          "description": "Ledger block height number"
+        },
+        "timestamp": {
+          "type": "number",
+          "description": "Unix timestamp in milliseconds"
+        }
+      },
+      "required": ["id", "category", "action", "actor", "summary", "recordHash", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/User"
+      },
+      "description": "User profile records authenticated via Google Sign-In"
+    },
+    "/threats/{threatId}": {
+      "schema": {
+        "$ref": "#/entities/ThreatRecord"
+      },
+      "description": "Persisted intrusion threat events verified by zero-knowledge proofs"
+    },
+    "/hf_models/{modelId}": {
+      "schema": {
+        "$ref": "#/entities/HuggingFaceModel"
+      },
+      "description": "Imported Hugging Face cybersecurity and intrusion detection models"
+    },
+    "/audit_logs/{auditId}": {
+      "schema": {
+        "$ref": "#/entities/AuditEntry"
+      },
+      "description": "Immutable audit entries synced to the blockchain ledger"
+    }
+  }
+}
